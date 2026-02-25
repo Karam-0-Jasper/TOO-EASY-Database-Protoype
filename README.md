@@ -1,1 +1,1 @@
-# TOO-EASY-Database-Protoype
+# TOO-EASY-Database-Prototype
