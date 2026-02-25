@@ -1,0 +1,1636 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Too Easy — Business Dashboard</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Space+Mono:wght@400;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+<style>
+  :root {
+    --bg: #0a0a0a;
+    --surface: #111111;
+    --surface2: #1a1a1a;
+    --border: #222222;
+    --accent: #e8ff47;
+    --accent2: #ff4747;
+    --text: #f0f0f0;
+    --muted: #666;
+    --green: #4fffb0;
+    --orange: #ff9547;
+  }
+
+- { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+background: var(–bg);
+color: var(–text);
+font-family: ‘DM Sans’, sans-serif;
+min-height: 100vh;
+display: flex;
+overflow-x: hidden;
+}
+
+/* Sidebar */
+.sidebar {
+width: 240px;
+min-height: 100vh;
+background: var(–surface);
+border-right: 1px solid var(–border);
+display: flex;
+flex-direction: column;
+position: fixed;
+top: 0; left: 0;
+z-index: 100;
+transition: transform 0.3s ease;
+}
+
+.logo {
+padding: 28px 24px 20px;
+border-bottom: 1px solid var(–border);
+}
+
+.logo-text {
+font-family: ‘Bebas Neue’, sans-serif;
+font-size: 2rem;
+letter-spacing: 3px;
+color: var(–accent);
+line-height: 1;
+}
+
+.logo-sub {
+font-size: 0.65rem;
+color: var(–muted);
+letter-spacing: 2px;
+text-transform: uppercase;
+font-family: ‘Space Mono’, monospace;
+margin-top: 4px;
+}
+
+.nav {
+padding: 20px 0;
+flex: 1;
+}
+
+.nav-label {
+font-size: 0.6rem;
+letter-spacing: 3px;
+text-transform: uppercase;
+color: var(–muted);
+font-family: ‘Space Mono’, monospace;
+padding: 8px 24px 4px;
+margin-top: 12px;
+}
+
+.nav-item {
+display: flex;
+align-items: center;
+gap: 12px;
+padding: 12px 24px;
+cursor: pointer;
+transition: all 0.2s;
+font-size: 0.9rem;
+font-weight: 500;
+color: var(–muted);
+border-left: 3px solid transparent;
+}
+
+.nav-item:hover { color: var(–text); background: var(–surface2); }
+.nav-item.active { color: var(–accent); border-left-color: var(–accent); background: rgba(232,255,71,0.05); }
+
+.nav-icon { font-size: 1.1rem; width: 20px; text-align: center; }
+
+.sidebar-footer {
+padding: 20px 24px;
+border-top: 1px solid var(–border);
+}
+
+.user-chip {
+display: flex;
+align-items: center;
+gap: 10px;
+}
+
+.avatar {
+width: 36px;
+height: 36px;
+background: var(–accent);
+border-radius: 50%;
+display: flex;
+align-items: center;
+justify-content: center;
+font-family: ‘Bebas Neue’, sans-serif;
+font-size: 1rem;
+color: #000;
+flex-shrink: 0;
+}
+
+.user-info .name { font-size: 0.85rem; font-weight: 600; }
+.user-info .role { font-size: 0.7rem; color: var(–muted); }
+
+/* Main */
+.main {
+margin-left: 240px;
+flex: 1;
+padding: 32px;
+min-height: 100vh;
+}
+
+/* Topbar */
+.topbar {
+display: flex;
+align-items: center;
+justify-content: space-between;
+margin-bottom: 32px;
+}
+
+.page-title {
+font-family: ‘Bebas Neue’, sans-serif;
+font-size: 2.2rem;
+letter-spacing: 2px;
+line-height: 1;
+}
+
+.page-sub { font-size: 0.8rem; color: var(–muted); margin-top: 2px; font-family: ‘Space Mono’, monospace; }
+
+.topbar-right { display: flex; align-items: center; gap: 12px; }
+
+.btn {
+padding: 10px 20px;
+border-radius: 6px;
+font-size: 0.85rem;
+font-weight: 600;
+cursor: pointer;
+border: none;
+font-family: ‘DM Sans’, sans-serif;
+transition: all 0.2s;
+letter-spacing: 0.5px;
+}
+
+.btn-primary { background: var(–accent); color: #000; }
+.btn-primary:hover { background: #d4eb3a; transform: translateY(-1px); }
+.btn-outline { background: transparent; color: var(–text); border: 1px solid var(–border); }
+.btn-outline:hover { border-color: var(–accent); color: var(–accent); }
+
+.notif-btn {
+width: 40px; height: 40px;
+background: var(–surface);
+border: 1px solid var(–border);
+border-radius: 8px;
+display: flex; align-items: center; justify-content: center;
+cursor: pointer;
+position: relative;
+font-size: 1.1rem;
+transition: border-color 0.2s;
+}
+.notif-btn:hover { border-color: var(–accent); }
+.notif-dot {
+width: 8px; height: 8px;
+background: var(–accent2);
+border-radius: 50%;
+position: absolute;
+top: 6px; right: 6px;
+border: 2px solid var(–bg);
+}
+
+/* Stats Grid */
+.stats-grid {
+display: grid;
+grid-template-columns: repeat(4, 1fr);
+gap: 16px;
+margin-bottom: 28px;
+}
+
+.stat-card {
+background: var(–surface);
+border: 1px solid var(–border);
+border-radius: 12px;
+padding: 22px;
+position: relative;
+overflow: hidden;
+transition: border-color 0.2s, transform 0.2s;
+}
+
+.stat-card:hover { border-color: var(–accent); transform: translateY(-2px); }
+
+.stat-card::before {
+content: ‘’;
+position: absolute;
+top: 0; right: 0;
+width: 80px; height: 80px;
+border-radius: 50%;
+opacity: 0.06;
+transform: translate(20px, -20px);
+}
+
+.stat-card.revenue::before { background: var(–accent); }
+.stat-card.orders::before { background: var(–green); }
+.stat-card.inventory::before { background: var(–orange); }
+.stat-card.profit::before { background: var(–accent2); }
+
+.stat-label {
+font-size: 0.7rem;
+color: var(–muted);
+text-transform: uppercase;
+letter-spacing: 2px;
+font-family: ‘Space Mono’, monospace;
+margin-bottom: 10px;
+}
+
+.stat-value {
+font-family: ‘Bebas Neue’, sans-serif;
+font-size: 2rem;
+letter-spacing: 1px;
+line-height: 1;
+margin-bottom: 8px;
+}
+
+.stat-card.revenue .stat-value { color: var(–accent); }
+.stat-card.orders .stat-value { color: var(–green); }
+.stat-card.inventory .stat-value { color: var(–orange); }
+.stat-card.profit .stat-value { color: #fff; }
+
+.stat-change {
+font-size: 0.75rem;
+display: flex;
+align-items: center;
+gap: 4px;
+}
+
+.up { color: var(–green); }
+.down { color: var(–accent2); }
+
+/* Grid Layout */
+.grid-2 {
+display: grid;
+grid-template-columns: 1fr 1fr;
+gap: 20px;
+margin-bottom: 20px;
+}
+
+.grid-3 {
+display: grid;
+grid-template-columns: 2fr 1fr;
+gap: 20px;
+margin-bottom: 20px;
+}
+
+/* Cards */
+.card {
+background: var(–surface);
+border: 1px solid var(–border);
+border-radius: 12px;
+padding: 24px;
+}
+
+.card-header {
+display: flex;
+align-items: center;
+justify-content: space-between;
+margin-bottom: 20px;
+}
+
+.card-title {
+font-family: ‘Bebas Neue’, sans-serif;
+font-size: 1.2rem;
+letter-spacing: 1.5px;
+}
+
+.card-badge {
+font-size: 0.7rem;
+font-family: ‘Space Mono’, monospace;
+color: var(–muted);
+background: var(–surface2);
+padding: 4px 10px;
+border-radius: 20px;
+border: 1px solid var(–border);
+}
+
+/* Chart bars */
+.chart-bars {
+display: flex;
+align-items: flex-end;
+gap: 8px;
+height: 120px;
+padding-top: 10px;
+}
+
+.bar-wrap {
+flex: 1;
+display: flex;
+flex-direction: column;
+align-items: center;
+gap: 6px;
+height: 100%;
+justify-content: flex-end;
+}
+
+.bar {
+width: 100%;
+border-radius: 4px 4px 0 0;
+background: var(–surface2);
+position: relative;
+transition: background 0.3s;
+cursor: pointer;
+min-height: 4px;
+}
+
+.bar:hover { background: var(–accent); }
+.bar.highlight { background: var(–accent); }
+
+.bar-label {
+font-size: 0.65rem;
+color: var(–muted);
+font-family: ‘Space Mono’, monospace;
+}
+
+/* Table */
+.table-wrap { overflow-x: auto; }
+
+table {
+width: 100%;
+border-collapse: collapse;
+font-size: 0.85rem;
+}
+
+thead th {
+text-align: left;
+padding: 10px 14px;
+font-size: 0.65rem;
+letter-spacing: 2px;
+text-transform: uppercase;
+color: var(–muted);
+font-family: ‘Space Mono’, monospace;
+border-bottom: 1px solid var(–border);
+white-space: nowrap;
+}
+
+tbody tr {
+border-bottom: 1px solid var(–border);
+transition: background 0.15s;
+cursor: pointer;
+}
+
+tbody tr:hover { background: var(–surface2); }
+tbody tr:last-child { border-bottom: none; }
+
+tbody td {
+padding: 14px;
+vertical-align: middle;
+}
+
+.product-cell { display: flex; align-items: center; gap: 12px; }
+.product-thumb {
+width: 36px; height: 36px;
+border-radius: 6px;
+display: flex; align-items: center; justify-content: center;
+font-size: 1.2rem;
+flex-shrink: 0;
+}
+
+.product-name { font-weight: 600; font-size: 0.88rem; }
+.product-sku { font-size: 0.7rem; color: var(–muted); font-family: ‘Space Mono’, monospace; }
+
+.status-badge {
+padding: 4px 10px;
+border-radius: 20px;
+font-size: 0.7rem;
+font-weight: 600;
+letter-spacing: 0.5px;
+}
+
+.status-badge.sold { background: rgba(79,255,176,0.1); color: var(–green); }
+.status-badge.low { background: rgba(255,149,71,0.1); color: var(–orange); }
+.status-badge.out { background: rgba(255,71,71,0.1); color: var(–accent2); }
+.status-badge.good { background: rgba(232,255,71,0.1); color: var(–accent); }
+
+/* Inventory progress bars */
+.inv-bar-bg {
+height: 6px;
+background: var(–surface2);
+border-radius: 3px;
+overflow: hidden;
+margin-top: 4px;
+}
+
+.inv-bar-fill {
+height: 100%;
+border-radius: 3px;
+transition: width 1s ease;
+}
+
+/* Alert item */
+.alert-item {
+display: flex;
+align-items: center;
+gap: 12px;
+padding: 14px 0;
+border-bottom: 1px solid var(–border);
+}
+
+.alert-item:last-child { border-bottom: none; }
+
+.alert-icon {
+width: 36px; height: 36px;
+border-radius: 8px;
+display: flex; align-items: center; justify-content: center;
+font-size: 1rem;
+flex-shrink: 0;
+}
+
+.alert-icon.warn { background: rgba(255,149,71,0.15); }
+.alert-icon.danger { background: rgba(255,71,71,0.15); }
+.alert-icon.info { background: rgba(232,255,71,0.1); }
+
+.alert-text .title { font-size: 0.85rem; font-weight: 500; }
+.alert-text .sub { font-size: 0.75rem; color: var(–muted); margin-top: 2px; }
+
+/* Expense list */
+.expense-item {
+display: flex;
+align-items: center;
+justify-content: space-between;
+padding: 12px 0;
+border-bottom: 1px solid var(–border);
+}
+
+.expense-item:last-child { border-bottom: none; }
+.expense-left { display: flex; align-items: center; gap: 10px; }
+.expense-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+.expense-name { font-size: 0.85rem; font-weight: 500; }
+.expense-date { font-size: 0.7rem; color: var(–muted); font-family: ‘Space Mono’, monospace; }
+.expense-amount { font-size: 0.9rem; font-weight: 600; color: var(–accent2); }
+
+/* Section tabs */
+.section-tabs {
+display: none;
+}
+
+/* Pages */
+.page { display: none; }
+.page.active { display: block; }
+
+/* Form styles */
+.form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.form-group { display: flex; flex-direction: column; gap: 6px; }
+.form-group.full { grid-column: 1 / -1; }
+.form-label { font-size: 0.7rem; letter-spacing: 2px; text-transform: uppercase; color: var(–muted); font-family: ‘Space Mono’, monospace; }
+.form-input, .form-select {
+background: var(–surface2);
+border: 1px solid var(–border);
+border-radius: 8px;
+padding: 12px 14px;
+color: var(–text);
+font-family: ‘DM Sans’, sans-serif;
+font-size: 0.9rem;
+outline: none;
+transition: border-color 0.2s;
+width: 100%;
+}
+.form-input:focus, .form-select:focus { border-color: var(–accent); }
+.form-select option { background: var(–surface2); }
+.form-section-title {
+font-family: ‘Bebas Neue’, sans-serif;
+font-size: 1.1rem;
+letter-spacing: 1.5px;
+margin-bottom: 16px;
+margin-top: 8px;
+}
+
+/* Modal */
+.modal-overlay {
+display: none;
+position: fixed;
+inset: 0;
+background: rgba(0,0,0,0.8);
+z-index: 200;
+align-items: center;
+justify-content: center;
+backdrop-filter: blur(4px);
+}
+
+.modal-overlay.open { display: flex; }
+
+.modal {
+background: var(–surface);
+border: 1px solid var(–border);
+border-radius: 16px;
+padding: 28px;
+width: 90%;
+max-width: 520px;
+max-height: 90vh;
+overflow-y: auto;
+animation: slideUp 0.25s ease;
+}
+
+@keyframes slideUp {
+from { transform: translateY(20px); opacity: 0; }
+to { transform: translateY(0); opacity: 1; }
+}
+
+.modal-header {
+display: flex;
+align-items: center;
+justify-content: space-between;
+margin-bottom: 24px;
+}
+
+.modal-title { font-family: ‘Bebas Neue’, sans-serif; font-size: 1.5rem; letter-spacing: 2px; }
+.modal-close { background: none; border: none; color: var(–muted); font-size: 1.4rem; cursor: pointer; transition: color 0.2s; }
+.modal-close:hover { color: var(–text); }
+
+.modal-actions { display: flex; gap: 12px; margin-top: 24px; justify-content: flex-end; }
+
+/* Tabs */
+.tabs { display: flex; gap: 4px; margin-bottom: 20px; background: var(–surface2); padding: 4px; border-radius: 8px; }
+.tab { padding: 8px 16px; border-radius: 6px; cursor: pointer; font-size: 0.85rem; font-weight: 500; color: var(–muted); transition: all 0.2s; }
+.tab.active { background: var(–surface); color: var(–text); }
+
+/* Animations */
+@keyframes fadeIn {
+from { opacity: 0; transform: translateY(8px); }
+to { opacity: 1; transform: translateY(0); }
+}
+
+.page.active .stat-card,
+.page.active .card {
+animation: fadeIn 0.4s ease forwards;
+}
+
+.page.active .stat-card:nth-child(1) { animation-delay: 0.05s; }
+.page.active .stat-card:nth-child(2) { animation-delay: 0.1s; }
+.page.active .stat-card:nth-child(3) { animation-delay: 0.15s; }
+.page.active .stat-card:nth-child(4) { animation-delay: 0.2s; }
+
+/* Scrollbar */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: var(–bg); }
+::-webkit-scrollbar-thumb { background: var(–border); border-radius: 3px; }
+
+/* Mobile */
+.hamburger { display: none; background: none; border: none; color: var(–text); font-size: 1.4rem; cursor: pointer; }
+
+@media (max-width: 900px) {
+.sidebar { transform: translateX(-100%); }
+.sidebar.open { transform: translateX(0); }
+.main { margin-left: 0; padding: 20px; }
+.hamburger { display: block; }
+.stats-grid { grid-template-columns: repeat(2, 1fr); }
+.grid-2, .grid-3 { grid-template-columns: 1fr; }
+.form-grid { grid-template-columns: 1fr; }
+}
+
+@media (max-width: 480px) {
+.stats-grid { grid-template-columns: 1fr 1fr; }
+.stat-value { font-size: 1.5rem; }
+}
+
+.overlay-bg { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 99; }
+.overlay-bg.open { display: block; }
+
+/* Customer page */
+.customer-card {
+background: var(–surface2);
+border: 1px solid var(–border);
+border-radius: 10px;
+padding: 16px;
+display: flex;
+align-items: center;
+gap: 14px;
+cursor: pointer;
+transition: border-color 0.2s, transform 0.2s;
+}
+.customer-card:hover { border-color: var(–accent); transform: translateY(-1px); }
+.customer-avatar {
+width: 44px; height: 44px;
+border-radius: 50%;
+display: flex; align-items: center; justify-content: center;
+font-family: ‘Bebas Neue’, sans-serif;
+font-size: 1.1rem;
+color: #000;
+flex-shrink: 0;
+}
+.customer-name { font-weight: 600; font-size: 0.9rem; }
+.customer-meta { font-size: 0.75rem; color: var(–muted); margin-top: 2px; }
+.customer-spend { font-family: ‘Space Mono’, monospace; font-size: 0.85rem; color: var(–accent); font-weight: 700; margin-left: auto; }
+.customers-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 12px; }
+
+.profit-ring-wrap { display: flex; align-items: center; gap: 24px; }
+.profit-ring { position: relative; width: 100px; height: 100px; flex-shrink: 0; }
+.profit-ring svg { transform: rotate(-90deg); }
+.profit-ring-label { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+.profit-ring-label span { font-family: ‘Bebas Neue’, sans-serif; font-size: 1.4rem; color: var(–accent); }
+.profit-ring-label small { font-size: 0.6rem; color: var(–muted); font-family: ‘Space Mono’, monospace; }
+
+.legend { display: flex; flex-direction: column; gap: 10px; }
+.legend-item { display: flex; align-items: center; gap: 8px; font-size: 0.82rem; }
+.legend-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+.legend-val { margin-left: auto; font-family: ‘Space Mono’, monospace; font-size: 0.78rem; }
+</style>
+
+</head>
+<body>
+
+<div class="overlay-bg" id="overlayBg" onclick="closeSidebar()"></div>
+
+<!-- Sidebar -->
+
+<nav class="sidebar" id="sidebar">
+  <div class="logo">
+    <div class="logo-text">TOO EASY</div>
+    <div class="logo-sub">Business Dashboard</div>
+  </div>
+
+  <div class="nav">
+    <div class="nav-label">Main</div>
+    <div class="nav-item active" onclick="showPage('dashboard', this)">
+      <span class="nav-icon">📊</span> Dashboard
+    </div>
+    <div class="nav-item" onclick="showPage('sales', this)">
+      <span class="nav-icon">💰</span> Sales & Revenue
+    </div>
+    <div class="nav-item" onclick="showPage('inventory', this)">
+      <span class="nav-icon">📦</span> Inventory
+    </div>
+    <div class="nav-item" onclick="showPage('customers', this)">
+      <span class="nav-icon">👥</span> Customers
+    </div>
+
+```
+<div class="nav-label">Finance</div>
+<div class="nav-item" onclick="showPage('expenses', this)">
+  <span class="nav-icon">📉</span> Expenses
+</div>
+<div class="nav-item" onclick="showPage('reports', this)">
+  <span class="nav-icon">📋</span> Reports
+</div>
+
+<div class="nav-label">Settings</div>
+<div class="nav-item" onclick="showPage('products', this)">
+  <span class="nav-icon">👕</span> Products
+</div>
+```
+
+  </div>
+
+  <div class="sidebar-footer">
+    <div class="user-chip">
+      <div class="avatar">JT</div>
+      <div class="user-info">
+        <div class="name">JacTheRealest</div>
+        <div class="role">Owner · Admin</div>
+      </div>
+    </div>
+  </div>
+</nav>
+
+<!-- Main -->
+
+<main class="main">
+
+  <!-- Topbar -->
+
+  <div class="topbar">
+    <div>
+      <button class="hamburger" onclick="toggleSidebar()">☰</button>
+      <div class="page-title" id="pageTitle">Dashboard</div>
+      <div class="page-sub" id="pageSub">Wed, Feb 25 2026 · Monrovia, LR</div>
+    </div>
+    <div class="topbar-right">
+      <div class="notif-btn" onclick="alert('3 alerts: Low stock on Caps, Restock due, New order')">
+        🔔 <div class="notif-dot"></div>
+      </div>
+      <button class="btn btn-primary" onclick="openModal('saleModal')">+ Record Sale</button>
+    </div>
+  </div>
+
+  <!-- DASHBOARD PAGE -->
+
+  <div class="page active" id="page-dashboard">
+    <!-- Stats -->
+    <div class="stats-grid">
+      <div class="stat-card revenue">
+        <div class="stat-label">Today's Revenue</div>
+        <div class="stat-value">L$48,500</div>
+        <div class="stat-change up">↑ 12% vs yesterday</div>
+      </div>
+      <div class="stat-card orders">
+        <div class="stat-label">Orders Today</div>
+        <div class="stat-value">24</div>
+        <div class="stat-change up">↑ 8 more than avg</div>
+      </div>
+      <div class="stat-card inventory">
+        <div class="stat-label">Items In Stock</div>
+        <div class="stat-value">312</div>
+        <div class="stat-change down">↓ 18 sold today</div>
+      </div>
+      <div class="stat-card profit">
+        <div class="stat-label">Net Profit (Month)</div>
+        <div class="stat-value">L$620K</div>
+        <div class="stat-change up">↑ 23% vs last mo.</div>
+      </div>
+    </div>
+
+```
+<!-- Charts row -->
+<div class="grid-3" style="margin-bottom:20px;">
+  <div class="card">
+    <div class="card-header">
+      <div class="card-title">Weekly Sales</div>
+      <div class="card-badge">This Week</div>
+    </div>
+    <div class="chart-bars" id="weekChart"></div>
+    <div style="display:flex;justify-content:space-between;margin-top:12px;">
+      <span style="font-size:0.7rem;color:var(--muted);font-family:'Space Mono',monospace;">Total: L$284,200</span>
+      <span style="font-size:0.7rem;color:var(--green);font-family:'Space Mono',monospace;">↑ 18% WoW</span>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header">
+      <div class="card-title">Revenue Split</div>
+      <div class="card-badge">By Category</div>
+    </div>
+    <div class="profit-ring-wrap">
+      <div class="profit-ring">
+        <svg width="100" height="100" viewBox="0 0 100 100">
+          <circle cx="50" cy="50" r="40" fill="none" stroke="var(--surface2)" stroke-width="12"/>
+          <circle cx="50" cy="50" r="40" fill="none" stroke="var(--accent)" stroke-width="12"
+            stroke-dasharray="100.5 150.7" stroke-linecap="round"/>
+          <circle cx="50" cy="50" r="40" fill="none" stroke="var(--green)" stroke-width="12"
+            stroke-dasharray="60.3 251.2" stroke-dashoffset="-100.5" stroke-linecap="round"/>
+          <circle cx="50" cy="50" r="40" fill="none" stroke="var(--orange)" stroke-width="12"
+            stroke-dasharray="40.2 251.2" stroke-dashoffset="-160.8" stroke-linecap="round"/>
+        </svg>
+        <div class="profit-ring-label"><span>67%</span><small>SHIRTS</small></div>
+      </div>
+      <div class="legend">
+        <div class="legend-item"><div class="legend-dot" style="background:var(--accent)"></div> Shirts <span class="legend-val">L$190K</span></div>
+        <div class="legend-item"><div class="legend-dot" style="background:var(--green)"></div> Caps <span class="legend-val">L$95K</span></div>
+        <div class="legend-item"><div class="legend-dot" style="background:var(--orange)"></div> Hoodies <span class="legend-val">L$71K</span></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Recent Sales & Alerts -->
+<div class="grid-2">
+  <div class="card">
+    <div class="card-header">
+      <div class="card-title">Recent Transactions</div>
+      <button class="btn btn-outline" style="padding:6px 14px;font-size:0.78rem;" onclick="showPage('sales', document.querySelector('[onclick*=sales]'))">View All</button>
+    </div>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Product</th>
+            <th>Qty</th>
+            <th>Amount</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><div class="product-cell"><div class="product-thumb" style="background:rgba(232,255,71,0.1)">👕</div><div><div class="product-name">TE Logo Tee</div><div class="product-sku">#TE-001</div></div></div></td>
+            <td>3</td>
+            <td style="font-family:'Space Mono',monospace;">L$7,500</td>
+            <td><span class="status-badge sold">Sold</span></td>
+          </tr>
+          <tr>
+            <td><div class="product-cell"><div class="product-thumb" style="background:rgba(79,255,176,0.1)">🧢</div><div><div class="product-name">Too Easy Cap</div><div class="product-sku">#TE-004</div></div></div></td>
+            <td>2</td>
+            <td style="font-family:'Space Mono',monospace;">L$4,000</td>
+            <td><span class="status-badge sold">Sold</span></td>
+          </tr>
+          <tr>
+            <td><div class="product-cell"><div class="product-thumb" style="background:rgba(255,149,71,0.1)">🧥</div><div><div class="product-name">LR Hoodie</div><div class="product-sku">#TE-007</div></div></div></td>
+            <td>1</td>
+            <td style="font-family:'Space Mono',monospace;">L$12,000</td>
+            <td><span class="status-badge sold">Sold</span></td>
+          </tr>
+          <tr>
+            <td><div class="product-cell"><div class="product-thumb" style="background:rgba(232,255,71,0.1)">👕</div><div><div class="product-name">Liberian Jue Crop</div><div class="product-sku">#TE-012</div></div></div></td>
+            <td>4</td>
+            <td style="font-family:'Space Mono',monospace;">L$16,000</td>
+            <td><span class="status-badge sold">Sold</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header">
+      <div class="card-title">Alerts</div>
+      <div class="card-badge">3 Active</div>
+    </div>
+    <div class="alert-item">
+      <div class="alert-icon danger">⚠️</div>
+      <div class="alert-text">
+        <div class="title">Too Easy Cap — Out of Stock</div>
+        <div class="sub">0 units remaining · Restock immediately</div>
+      </div>
+    </div>
+    <div class="alert-item">
+      <div class="alert-icon warn">📦</div>
+      <div class="alert-text">
+        <div class="title">LR Hoodie — Low Stock</div>
+        <div class="sub">Only 3 units left · Order more soon</div>
+      </div>
+    </div>
+    <div class="alert-item">
+      <div class="alert-icon info">💡</div>
+      <div class="alert-text">
+        <div class="title">Best Seller: TE Logo Tee</div>
+        <div class="sub">48 sold this week · Consider bulk restock</div>
+      </div>
+    </div>
+  </div>
+</div>
+```
+
+  </div>
+
+  <!-- SALES PAGE -->
+
+  <div class="page" id="page-sales">
+    <div class="stats-grid">
+      <div class="stat-card revenue">
+        <div class="stat-label">Today</div>
+        <div class="stat-value">L$48,500</div>
+        <div class="stat-change up">↑ 12%</div>
+      </div>
+      <div class="stat-card orders">
+        <div class="stat-label">This Week</div>
+        <div class="stat-value">L$284K</div>
+        <div class="stat-change up">↑ 18%</div>
+      </div>
+      <div class="stat-card inventory">
+        <div class="stat-label">This Month</div>
+        <div class="stat-value">L$1.2M</div>
+        <div class="stat-change up">↑ 23%</div>
+      </div>
+      <div class="stat-card profit">
+        <div class="stat-label">Transactions</div>
+        <div class="stat-value">847</div>
+        <div class="stat-change up">↑ Total</div>
+      </div>
+    </div>
+
+```
+<div class="card">
+  <div class="card-header">
+    <div class="card-title">All Transactions</div>
+    <div style="display:flex;gap:10px;align-items:center;">
+      <select class="form-select" style="padding:8px 12px;width:auto;">
+        <option>All Time</option>
+        <option>Today</option>
+        <option>This Week</option>
+        <option>This Month</option>
+      </select>
+      <button class="btn btn-primary" onclick="openModal('saleModal')">+ Add Sale</button>
+    </div>
+  </div>
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Product</th>
+          <th>Customer</th>
+          <th>Qty</th>
+          <th>Unit Price</th>
+          <th>Total</th>
+          <th>Date</th>
+          <th>Status</th>
+        </tr>
+      </thead>
+      <tbody id="salesTableBody">
+        <!-- filled by JS -->
+      </tbody>
+    </table>
+  </div>
+</div>
+```
+
+  </div>
+
+  <!-- INVENTORY PAGE -->
+
+  <div class="page" id="page-inventory">
+    <div class="stats-grid">
+      <div class="stat-card revenue">
+        <div class="stat-label">Total SKUs</div>
+        <div class="stat-value">18</div>
+        <div class="stat-change">Products tracked</div>
+      </div>
+      <div class="stat-card orders">
+        <div class="stat-label">In Stock</div>
+        <div class="stat-value">312</div>
+        <div class="stat-change up">Units available</div>
+      </div>
+      <div class="stat-card inventory">
+        <div class="stat-label">Low Stock</div>
+        <div class="stat-value">3</div>
+        <div class="stat-change down">Need restocking</div>
+      </div>
+      <div class="stat-card profit">
+        <div class="stat-label">Stock Value</div>
+        <div class="stat-value">L$890K</div>
+        <div class="stat-change">Cost price total</div>
+      </div>
+    </div>
+
+```
+<div class="card">
+  <div class="card-header">
+    <div class="card-title">Inventory Overview</div>
+    <button class="btn btn-primary" onclick="openModal('stockModal')">+ Add Stock</button>
+  </div>
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>Product</th>
+          <th>Category</th>
+          <th>In Stock</th>
+          <th>Sold</th>
+          <th>Cost Price</th>
+          <th>Sell Price</th>
+          <th>Margin</th>
+          <th>Status</th>
+        </tr>
+      </thead>
+      <tbody id="inventoryTableBody">
+        <!-- filled by JS -->
+      </tbody>
+    </table>
+  </div>
+</div>
+```
+
+  </div>
+
+  <!-- CUSTOMERS PAGE -->
+
+  <div class="page" id="page-customers">
+    <div class="stats-grid">
+      <div class="stat-card revenue">
+        <div class="stat-label">Total Customers</div>
+        <div class="stat-value">142</div>
+        <div class="stat-change up">↑ 14 new this month</div>
+      </div>
+      <div class="stat-card orders">
+        <div class="stat-label">Returning</div>
+        <div class="stat-value">89</div>
+        <div class="stat-change up">63% return rate</div>
+      </div>
+      <div class="stat-card inventory">
+        <div class="stat-label">Avg Spend</div>
+        <div class="stat-value">L$8,450</div>
+        <div class="stat-change up">Per customer</div>
+      </div>
+      <div class="stat-card profit">
+        <div class="stat-label">Top Spender</div>
+        <div class="stat-value">L$84K</div>
+        <div class="stat-change">All time record</div>
+      </div>
+    </div>
+
+```
+<div class="card">
+  <div class="card-header">
+    <div class="card-title">Customer Records</div>
+    <button class="btn btn-primary" onclick="openModal('customerModal')">+ Add Customer</button>
+  </div>
+  <div class="customers-grid" id="customersGrid">
+    <!-- filled by JS -->
+  </div>
+</div>
+```
+
+  </div>
+
+  <!-- EXPENSES PAGE -->
+
+  <div class="page" id="page-expenses">
+    <div class="stats-grid">
+      <div class="stat-card revenue">
+        <div class="stat-label">Total Expenses</div>
+        <div class="stat-value">L$580K</div>
+        <div class="stat-change down">↑ 8% this month</div>
+      </div>
+      <div class="stat-card orders">
+        <div class="stat-label">Restocking</div>
+        <div class="stat-value">L$420K</div>
+        <div class="stat-change">72% of expenses</div>
+      </div>
+      <div class="stat-card inventory">
+        <div class="stat-label">Operations</div>
+        <div class="stat-value">L$98K</div>
+        <div class="stat-change">17% of expenses</div>
+      </div>
+      <div class="stat-card profit">
+        <div class="stat-label">Net Profit</div>
+        <div class="stat-value">L$620K</div>
+        <div class="stat-change up">↑ Revenue - Expenses</div>
+      </div>
+    </div>
+
+```
+<div class="grid-2">
+  <div class="card">
+    <div class="card-header">
+      <div class="card-title">Expense Log</div>
+      <button class="btn btn-primary" onclick="openModal('expenseModal')">+ Add Expense</button>
+    </div>
+    <div id="expenseList">
+      <!-- filled by JS -->
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header">
+      <div class="card-title">Profit Summary</div>
+      <div class="card-badge">Feb 2026</div>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:16px;margin-top:8px;">
+      <div>
+        <div style="display:flex;justify-content:space-between;margin-bottom:8px;">
+          <span style="font-size:0.8rem;color:var(--muted);">Total Revenue</span>
+          <span style="font-family:'Space Mono',monospace;color:var(--green);">L$1,200,000</span>
+        </div>
+        <div class="inv-bar-bg"><div class="inv-bar-fill" style="width:100%;background:var(--green);"></div></div>
+      </div>
+      <div>
+        <div style="display:flex;justify-content:space-between;margin-bottom:8px;">
+          <span style="font-size:0.8rem;color:var(--muted);">Restocking Costs</span>
+          <span style="font-family:'Space Mono',monospace;color:var(--accent2);">L$420,000</span>
+        </div>
+        <div class="inv-bar-bg"><div class="inv-bar-fill" style="width:35%;background:var(--accent2);"></div></div>
+      </div>
+      <div>
+        <div style="display:flex;justify-content:space-between;margin-bottom:8px;">
+          <span style="font-size:0.8rem;color:var(--muted);">Operations</span>
+          <span style="font-family:'Space Mono',monospace;color:var(--orange);">L$98,000</span>
+        </div>
+        <div class="inv-bar-bg"><div class="inv-bar-fill" style="width:8%;background:var(--orange);"></div></div>
+      </div>
+      <div>
+        <div style="display:flex;justify-content:space-between;margin-bottom:8px;">
+          <span style="font-size:0.8rem;color:var(--muted);">Events & Marketing</span>
+          <span style="font-family:'Space Mono',monospace;color:var(--orange);">L$62,000</span>
+        </div>
+        <div class="inv-bar-bg"><div class="inv-bar-fill" style="width:5%;background:var(--orange);"></div></div>
+      </div>
+      <div style="border-top:1px solid var(--border);padding-top:16px;">
+        <div style="display:flex;justify-content:space-between;">
+          <span style="font-weight:700;font-family:'Bebas Neue',sans-serif;font-size:1.1rem;letter-spacing:1px;">NET PROFIT</span>
+          <span style="font-family:'Bebas Neue',sans-serif;font-size:1.3rem;color:var(--accent);letter-spacing:1px;">L$620,000</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+```
+
+  </div>
+
+  <!-- REPORTS PAGE -->
+
+  <div class="page" id="page-reports">
+    <div class="card" style="margin-bottom:20px;">
+      <div class="card-header">
+        <div class="card-title">Generate Report</div>
+      </div>
+      <div class="form-grid">
+        <div class="form-group">
+          <label class="form-label">Report Type</label>
+          <select class="form-select">
+            <option>Sales Report</option>
+            <option>Inventory Report</option>
+            <option>Expense Report</option>
+            <option>Profit & Loss</option>
+            <option>Customer Report</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Date Range</label>
+          <select class="form-select">
+            <option>Today</option>
+            <option>This Week</option>
+            <option>This Month</option>
+            <option>Custom Range</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">From Date</label>
+          <input type="date" class="form-input" value="2026-02-01"/>
+        </div>
+        <div class="form-group">
+          <label class="form-label">To Date</label>
+          <input type="date" class="form-input" value="2026-02-25"/>
+        </div>
+      </div>
+      <div style="display:flex;gap:12px;margin-top:20px;">
+        <button class="btn btn-primary" onclick="alert('Report generated! In a full build, this downloads as PDF/Excel.')">📥 Export PDF</button>
+        <button class="btn btn-outline" onclick="alert('Excel export ready! In a full build, this downloads as .xlsx')">📊 Export Excel</button>
+      </div>
+    </div>
+
+```
+<div class="card">
+  <div class="card-header">
+    <div class="card-title">Monthly Overview</div>
+    <div class="card-badge">Feb 2026</div>
+  </div>
+  <div class="chart-bars" id="monthChart" style="height:150px;"></div>
+</div>
+```
+
+  </div>
+
+  <!-- PRODUCTS PAGE -->
+
+  <div class="page" id="page-products">
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title">Product Catalog</div>
+        <button class="btn btn-primary" onclick="openModal('productModal')">+ Add Product</button>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Product</th>
+              <th>Category</th>
+              <th>SKU</th>
+              <th>Sell Price</th>
+              <th>Cost Price</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="productsTableBody">
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+</main>
+
+<!-- MODALS -->
+
+<!-- Record Sale Modal -->
+
+<div class="modal-overlay" id="saleModal">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title">Record New Sale</div>
+      <button class="modal-close" onclick="closeModal('saleModal')">✕</button>
+    </div>
+    <div class="form-grid">
+      <div class="form-group">
+        <label class="form-label">Product</label>
+        <select class="form-select">
+          <option>TE Logo Tee</option>
+          <option>Too Easy Cap</option>
+          <option>LR Hoodie</option>
+          <option>Liberian Jue Crop</option>
+          <option>TE Joggers</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Quantity</label>
+        <input type="number" class="form-input" placeholder="1" min="1"/>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Unit Price (L$)</label>
+        <input type="number" class="form-input" placeholder="2500"/>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Customer Name</label>
+        <input type="text" class="form-input" placeholder="Walk-in Customer"/>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Payment Method</label>
+        <select class="form-select">
+          <option>Cash</option>
+          <option>Mobile Money</option>
+          <option>Bank Transfer</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Date</label>
+        <input type="date" class="form-input" value="2026-02-25"/>
+      </div>
+      <div class="form-group full">
+        <label class="form-label">Notes</label>
+        <input type="text" class="form-input" placeholder="Optional notes..."/>
+      </div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-outline" onclick="closeModal('saleModal')">Cancel</button>
+      <button class="btn btn-primary" onclick="saveAndClose('saleModal', 'Sale recorded successfully! ✅')">Save Sale</button>
+    </div>
+  </div>
+</div>
+
+<!-- Add Stock Modal -->
+
+<div class="modal-overlay" id="stockModal">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title">Add Stock / Restock</div>
+      <button class="modal-close" onclick="closeModal('stockModal')">✕</button>
+    </div>
+    <div class="form-grid">
+      <div class="form-group">
+        <label class="form-label">Product</label>
+        <select class="form-select">
+          <option>TE Logo Tee</option>
+          <option>Too Easy Cap</option>
+          <option>LR Hoodie</option>
+          <option>Liberian Jue Crop</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Quantity Added</label>
+        <input type="number" class="form-input" placeholder="50"/>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Cost Price per Unit (L$)</label>
+        <input type="number" class="form-input" placeholder="1200"/>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Supplier / Source</label>
+        <input type="text" class="form-input" placeholder="Supplier name"/>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Date Purchased</label>
+        <input type="date" class="form-input" value="2026-02-25"/>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Total Cost (L$)</label>
+        <input type="number" class="form-input" placeholder="Auto-calculated"/>
+      </div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-outline" onclick="closeModal('stockModal')">Cancel</button>
+      <button class="btn btn-primary" onclick="saveAndClose('stockModal', 'Stock added successfully! ✅')">Add Stock</button>
+    </div>
+  </div>
+</div>
+
+<!-- Add Customer Modal -->
+
+<div class="modal-overlay" id="customerModal">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title">Add Customer</div>
+      <button class="modal-close" onclick="closeModal('customerModal')">✕</button>
+    </div>
+    <div class="form-grid">
+      <div class="form-group">
+        <label class="form-label">Full Name</label>
+        <input type="text" class="form-input" placeholder="Customer name"/>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Phone Number</label>
+        <input type="text" class="form-input" placeholder="+231 ..."/>
+      </div>
+      <div class="form-group full">
+        <label class="form-label">Location</label>
+        <input type="text" class="form-input" placeholder="Monrovia, Paynesville, etc."/>
+      </div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-outline" onclick="closeModal('customerModal')">Cancel</button>
+      <button class="btn btn-primary" onclick="saveAndClose('customerModal', 'Customer added! ✅')">Save Customer</button>
+    </div>
+  </div>
+</div>
+
+<!-- Add Expense Modal -->
+
+<div class="modal-overlay" id="expenseModal">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title">Log Expense</div>
+      <button class="modal-close" onclick="closeModal('expenseModal')">✕</button>
+    </div>
+    <div class="form-grid">
+      <div class="form-group">
+        <label class="form-label">Category</label>
+        <select class="form-select">
+          <option>Restocking</option>
+          <option>Transport</option>
+          <option>Event / Marketing</option>
+          <option>Rent / Utilities</option>
+          <option>Other</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Amount (L$)</label>
+        <input type="number" class="form-input" placeholder="0"/>
+      </div>
+      <div class="form-group full">
+        <label class="form-label">Description</label>
+        <input type="text" class="form-input" placeholder="What was this expense for?"/>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Date</label>
+        <input type="date" class="form-input" value="2026-02-25"/>
+      </div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-outline" onclick="closeModal('expenseModal')">Cancel</button>
+      <button class="btn btn-primary" onclick="saveAndClose('expenseModal', 'Expense logged! ✅')">Save Expense</button>
+    </div>
+  </div>
+</div>
+
+<!-- Add Product Modal -->
+
+<div class="modal-overlay" id="productModal">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title">Add Product</div>
+      <button class="modal-close" onclick="closeModal('productModal')">✕</button>
+    </div>
+    <div class="form-grid">
+      <div class="form-group full">
+        <label class="form-label">Product Name</label>
+        <input type="text" class="form-input" placeholder="e.g. TE Logo Tee"/>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Category</label>
+        <select class="form-select">
+          <option>Shirts</option>
+          <option>Caps</option>
+          <option>Hoodies</option>
+          <option>Joggers</option>
+          <option>Accessories</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">SKU</label>
+        <input type="text" class="form-input" placeholder="TE-XXX"/>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Cost Price (L$)</label>
+        <input type="number" class="form-input" placeholder="1200"/>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Selling Price (L$)</label>
+        <input type="number" class="form-input" placeholder="2500"/>
+      </div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-outline" onclick="closeModal('productModal')">Cancel</button>
+      <button class="btn btn-primary" onclick="saveAndClose('productModal', 'Product added! ✅')">Save Product</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  // ---- DATA ----
+  const sales = [
+    { id:'TXN-001', product:'TE Logo Tee', customer:'Fatu Kollie', qty:3, unit:2500, total:7500, date:'2026-02-25', status:'sold' },
+    { id:'TXN-002', product:'Too Easy Cap', customer:'Marcus Johnson', qty:2, unit:2000, total:4000, date:'2026-02-25', status:'sold' },
+    { id:'TXN-003', product:'LR Hoodie', customer:'Bintu Kamara', qty:1, unit:12000, total:12000, date:'2026-02-24', status:'sold' },
+    { id:'TXN-004', product:'Liberian Jue Crop', customer:'Aminata Dolo', qty:4, unit:4000, total:16000, date:'2026-02-24', status:'sold' },
+    { id:'TXN-005', product:'TE Joggers', customer:'James Weah', qty:1, unit:8500, total:8500, date:'2026-02-23', status:'sold' },
+    { id:'TXN-006', product:'TE Logo Tee', customer:'Walk-in', qty:2, unit:2500, total:5000, date:'2026-02-23', status:'sold' },
+    { id:'TXN-007', product:'Too Easy Cap', customer:'Peter Nyenuh', qty:5, unit:2000, total:10000, date:'2026-02-22', status:'sold' },
+  ];
+
+  const inventory = [
+    { name:'TE Logo Tee', sku:'TE-001', cat:'Shirts', stock:48, sold:124, cost:1200, price:2500 },
+    { name:'Too Easy Cap', sku:'TE-004', cat:'Caps', stock:0, sold:88, cost:800, price:2000 },
+    { name:'LR Hoodie', sku:'TE-007', cat:'Hoodies', stock:3, sold:42, cost:5000, price:12000 },
+    { name:'Liberian Jue Crop', sku:'TE-012', cat:'Shirts', stock:22, sold:67, cost:1800, price:4000 },
+    { name:'TE Joggers', sku:'TE-009', cat:'Bottoms', stock:15, sold:33, cost:3000, price:8500 },
+    { name:'TE Beanie', sku:'TE-015', cat:'Accessories', stock:30, sold:19, cost:500, price:1500 },
+  ];
+
+  const customers = [
+    { name:'Fatu Kollie', phone:'+231 770 123 456', loc:'Monrovia', spend:'L$84,000', orders:12, color:'#e8ff47' },
+    { name:'Marcus Johnson', phone:'+231 880 234 567', loc:'Paynesville', spend:'L$52,000', orders:8, color:'#4fffb0' },
+    { name:'Bintu Kamara', phone:'+231 550 345 678', loc:'Monrovia', spend:'L$47,500', orders:6, color:'#ff9547' },
+    { name:'Aminata Dolo', phone:'+231 770 456 789', loc:'Congo Town', spend:'L$38,000', orders:9, color:'#ff4747' },
+    { name:'James Weah', phone:'+231 886 567 890', loc:'Sinkor', spend:'L$29,500', orders:4, color:'#e8ff47' },
+    { name:'Peter Nyenuh', phone:'+231 770 678 901', loc:'Monrovia', spend:'L$18,000', orders:3, color:'#4fffb0' },
+  ];
+
+  const expenses = [
+    { name:'Shirt Restock (100 pcs)', cat:'Restocking', amount:'L$120,000', date:'Feb 20', color:'#ff4747' },
+    { name:'Cap Restock (50 pcs)', cat:'Restocking', amount:'L$40,000', date:'Feb 18', color:'#ff4747' },
+    { name:'Event — Independence Day', cat:'Marketing', amount:'L$25,000', date:'Feb 15', color:'#ff9547' },
+    { name:'Transport & Delivery', cat:'Transport', amount:'L$8,500', date:'Feb 12', color:'#4fffb0' },
+    { name:'Hoodie Restock (20 pcs)', cat:'Restocking', amount:'L$100,000', date:'Feb 10', color:'#ff4747' },
+    { name:'Social Media Ads', cat:'Marketing', amount:'L$15,000', date:'Feb 05', color:'#ff9547' },
+  ];
+
+  const products = [
+    { name:'TE Logo Tee', cat:'Shirts', sku:'TE-001', cost:'L$1,200', price:'L$2,500' },
+    { name:'Too Easy Cap', cat:'Caps', sku:'TE-004', cost:'L$800', price:'L$2,000' },
+    { name:'LR Hoodie', cat:'Hoodies', sku:'TE-007', cost:'L$5,000', price:'L$12,000' },
+    { name:'Liberian Jue Crop', cat:'Shirts', sku:'TE-012', cost:'L$1,800', price:'L$4,000' },
+    { name:'TE Joggers', cat:'Bottoms', sku:'TE-009', cost:'L$3,000', price:'L$8,500' },
+    { name:'TE Beanie', cat:'Accessories', sku:'TE-015', cost:'L$500', price:'L$1,500' },
+  ];
+
+  // ---- RENDER ----
+  function renderSales() {
+    const tb = document.getElementById('salesTableBody');
+    tb.innerHTML = sales.map(s => `
+      <tr>
+        <td style="font-family:'Space Mono',monospace;font-size:0.75rem;color:var(--muted)">${s.id}</td>
+        <td><div class="product-cell"><div class="product-thumb" style="background:rgba(232,255,71,0.08)">👕</div><div class="product-name">${s.product}</div></div></td>
+        <td>${s.customer}</td>
+        <td>${s.qty}</td>
+        <td style="font-family:'Space Mono',monospace;">L$${s.unit.toLocaleString()}</td>
+        <td style="font-family:'Space Mono',monospace;color:var(--accent);font-weight:700;">L$${s.total.toLocaleString()}</td>
+        <td style="color:var(--muted);font-size:0.8rem;">${s.date}</td>
+        <td><span class="status-badge sold">Sold</span></td>
+      </tr>
+    `).join('');
+  }
+
+  function renderInventory() {
+    const tb = document.getElementById('inventoryTableBody');
+    tb.innerHTML = inventory.map(p => {
+      const margin = Math.round(((p.price - p.cost) / p.price) * 100);
+      let status, statusClass;
+      if (p.stock === 0) { status = 'Out of Stock'; statusClass = 'out'; }
+      else if (p.stock < 5) { status = 'Low Stock'; statusClass = 'low'; }
+      else { status = 'In Stock'; statusClass = 'good'; }
+      const pct = Math.min(100, Math.round(p.stock / (p.stock + p.sold) * 100));
+      return `
+        <tr>
+          <td><div class="product-name">${p.name}</div></td>
+          <td style="color:var(--muted);font-size:0.8rem;">${p.cat}</td>
+          <td>
+            <div style="font-weight:600;">${p.stock}</div>
+            <div class="inv-bar-bg" style="width:80px;margin-top:4px;"><div class="inv-bar-fill" style="width:${pct}%;background:${p.stock===0?'var(--accent2)':p.stock<5?'var(--orange)':'var(--green)'};"></div></div>
+          </td>
+          <td style="color:var(--muted);">${p.sold}</td>
+          <td style="font-family:'Space Mono',monospace;font-size:0.82rem;">L$${p.cost.toLocaleString()}</td>
+          <td style="font-family:'Space Mono',monospace;font-size:0.82rem;color:var(--accent);">L$${p.price.toLocaleString()}</td>
+          <td style="color:var(--green);font-family:'Space Mono',monospace;font-size:0.82rem;">${margin}%</td>
+          <td><span class="status-badge ${statusClass}">${status}</span></td>
+        </tr>
+      `;
+    }).join('');
+  }
+
+  function renderCustomers() {
+    const grid = document.getElementById('customersGrid');
+    grid.innerHTML = customers.map(c => `
+      <div class="customer-card">
+        <div class="customer-avatar" style="background:${c.color}">${c.name.split(' ').map(n=>n[0]).join('')}</div>
+        <div>
+          <div class="customer-name">${c.name}</div>
+          <div class="customer-meta">${c.phone} · ${c.loc} · ${c.orders} orders</div>
+        </div>
+        <div class="customer-spend">${c.spend}</div>
+      </div>
+    `).join('');
+  }
+
+  function renderExpenses() {
+    const list = document.getElementById('expenseList');
+    list.innerHTML = expenses.map(e => `
+      <div class="expense-item">
+        <div class="expense-left">
+          <div class="expense-dot" style="background:${e.color}"></div>
+          <div>
+            <div class="expense-name">${e.name}</div>
+            <div class="expense-date">${e.cat} · ${e.date}</div>
+          </div>
+        </div>
+        <div class="expense-amount">${e.amount}</div>
+      </div>
+    `).join('');
+  }
+
+  function renderProducts() {
+    const tb = document.getElementById('productsTableBody');
+    tb.innerHTML = products.map(p => `
+      <tr>
+        <td><div class="product-name">${p.name}</div></td>
+        <td style="color:var(--muted);font-size:0.82rem;">${p.cat}</td>
+        <td style="font-family:'Space Mono',monospace;font-size:0.75rem;color:var(--muted);">${p.sku}</td>
+        <td style="font-family:'Space Mono',monospace;color:var(--accent);">${p.price}</td>
+        <td style="font-family:'Space Mono',monospace;color:var(--muted);">${p.cost}</td>
+        <td>
+          <button class="btn btn-outline" style="padding:5px 12px;font-size:0.75rem;margin-right:6px;" onclick="alert('Edit product: ${p.name}')">Edit</button>
+          <button style="padding:5px 12px;font-size:0.75rem;border-radius:6px;background:rgba(255,71,71,0.1);color:var(--accent2);border:1px solid rgba(255,71,71,0.2);cursor:pointer;" onclick="alert('Delete product: ${p.name}')">Delete</button>
+        </td>
+      </tr>
+    `).join('');
+  }
+
+  // ---- CHARTS ----
+  function buildWeekChart() {
+    const data = [32000, 41000, 28000, 55000, 38000, 48500, 41200];
+    const labels = ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
+    const max = Math.max(...data);
+    const container = document.getElementById('weekChart');
+    container.innerHTML = data.map((v, i) => `
+      <div class="bar-wrap">
+        <div class="bar${i===5?' highlight':''}" style="height:${(v/max)*100}%;" title="L$${v.toLocaleString()}"></div>
+        <div class="bar-label">${labels[i]}</div>
+      </div>
+    `).join('');
+  }
+
+  function buildMonthChart() {
+    const data = [180000,220000,195000,260000,310000,285000,340000,290000,380000,420000,390000,450000];
+    const labels = ['Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec','Jan','Feb'];
+    const max = Math.max(...data);
+    const container = document.getElementById('monthChart');
+    if (!container) return;
+    container.innerHTML = data.map((v, i) => `
+      <div class="bar-wrap">
+        <div class="bar${i===11?' highlight':''}" style="height:${(v/max)*100}%;" title="L$${(v/1000).toFixed(0)}K"></div>
+        <div class="bar-label">${labels[i]}</div>
+      </div>
+    `).join('');
+  }
+
+  // ---- NAVIGATION ----
+  function showPage(id, el) {
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+    document.getElementById('page-' + id).classList.add('active');
+    if (el) el.classList.add('active');
+
+    const titles = {
+      dashboard: ['Dashboard', 'Overview · Too Easy Brand'],
+      sales: ['Sales & Revenue', 'Track your transactions'],
+      inventory: ['Inventory', 'Manage your stock'],
+      customers: ['Customers', 'Customer records & history'],
+      expenses: ['Expenses', 'Track costs & calculate profit'],
+      reports: ['Reports', 'Generate & export reports'],
+      products: ['Products', 'Manage your product catalog'],
+    };
+    document.getElementById('pageTitle').textContent = titles[id][0];
+    document.getElementById('pageSub').textContent = titles[id][1];
+
+    if (id === 'reports') setTimeout(buildMonthChart, 50);
+    closeSidebar();
+  }
+
+  // ---- MODAL ----
+  function openModal(id) {
+    document.getElementById(id).classList.add('open');
+  }
+
+  function closeModal(id) {
+    document.getElementById(id).classList.remove('open');
+  }
+
+  function saveAndClose(id, msg) {
+    closeModal(id);
+    const toast = document.createElement('div');
+    toast.textContent = msg;
+    Object.assign(toast.style, {
+      position:'fixed', bottom:'24px', right:'24px', background:'var(--accent)',
+      color:'#000', padding:'12px 20px', borderRadius:'8px', fontWeight:'700',
+      fontSize:'0.9rem', zIndex:'999', fontFamily:"'DM Sans',sans-serif",
+      animation:'fadeIn 0.3s ease'
+    });
+    document.body.appendChild(toast);
+    setTimeout(() => toast.remove(), 2800);
+  }
+
+  // Close modal on overlay click
+  document.querySelectorAll('.modal-overlay').forEach(m => {
+    m.addEventListener('click', e => { if (e.target === m) m.classList.remove('open'); });
+  });
+
+  // ---- SIDEBAR ----
+  function toggleSidebar() {
+    document.getElementById('sidebar').classList.toggle('open');
+    document.getElementById('overlayBg').classList.toggle('open');
+  }
+
+  function closeSidebar() {
+    document.getElementById('sidebar').classList.remove('open');
+    document.getElementById('overlayBg').classList.remove('open');
+  }
+
+  // ---- INIT ----
+  renderSales();
+  renderInventory();
+  renderCustomers();
+  renderExpenses();
+  renderProducts();
+  buildWeekChart();
+</script>
+
+</body>
+</html>
